@@ -20,6 +20,8 @@ Página estática (HTML, CSS e JavaScript puros) que acompanha a apuração do 2
 4. Em um ou dois minutos o endereço aparece no topo da mesma tela, no formato
    `https://SEU-USUARIO.github.io/apuracao-2026/`.
 
+Este repositório usa o domínio próprio **https://apuracao.scalambrini.com/** (arquivo `CNAME` + registro CNAME `apuracao` → `scalambrini.github.io` no DNS).
+
 ## Testar antes de domingo
 
 | Endereço | O que mostra |
