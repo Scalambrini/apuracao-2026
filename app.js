@@ -78,7 +78,9 @@
         sq: /^\d+$/.test(String(x.sqcand || "")) ? String(x.sqcand) : "",
         vap: num(x.vap),
         pvap: x.pvap != null && x.pvap !== "" ? num(x.pvap) : null,
-        eleito: x.e === "s" || (/\beleit[oa]\b/.test(st) && !/nao eleit/.test(st))
+        // Só a situação por extenso ("Eleito") indica vitória. O campo "e" do arquivo
+        // vem marcado também para quem passou ao 2º turno, por isso não é usado.
+        eleito: /\beleit[oa]\b/.test(st) && !/nao eleit/.test(st)
       });
     };
 
@@ -268,9 +270,24 @@
   /* ---------- desenho da página ---------- */
   let ultimoAnuncio = -1;
 
+  // Declara vencedor só quando não há dúvida:
+  //  - o TSE marcou "Eleito" em exatamente um candidato, e ele é o mais votado; ou
+  //  - a totalização final do TSE terminou (100% e and = "f") e um dos dois tem mais votos.
+  // Nunca no modo de simulação nem no teste do 1º turno.
+  function definirVencedor(lista, dados) {
+    if (!dados || MODO === "demo" || MODO === "turno1" || lista.length !== 2) return null;
+    const ord = [...lista].sort((a, b) => b.vap - a.vap);
+    if (!ord[0].vap || ord[0].vap === ord[1].vap) return null;
+    const marcados = lista.filter((c) => c.eleito);
+    if (marcados.length === 1 && marcados[0].numero === ord[0].numero) return ord[0];
+    if (dados.final && dados.pst >= 99.995) return ord[0];
+    return null;
+  }
+
   function render(dados) {
     const lista = listaExibida(dados);
     garantirItens(lista);
+    const vencedor = definirVencedor(lista, dados);
 
     lista.forEach((c) => {
       const it = itens.get(c.numero);
@@ -280,7 +297,7 @@
       it.trilha.setAttribute("aria-valuenow", c.pct.toFixed(2));
       it.trilha.setAttribute("aria-valuetext", fmtPct(c.pct) + "% dos votos válidos");
       if (c.partido) it.partido.textContent = c.partido;
-      it.selo.hidden = !(c.eleito && MODO !== "demo");
+      it.selo.hidden = !(vencedor && vencedor.numero === c.numero);
     });
     reordenar(lista);
 
@@ -296,7 +313,7 @@
 
     desenharDiferenca(lista, dados);
     desenharResumo(dados);
-    desenharFinal(lista, dados);
+    desenharFinal(vencedor, dados);
     desenharNota(lista, dados);
     anunciar(lista, dados);
   }
@@ -313,8 +330,9 @@
     nome.style.color = matchMedia("(prefers-color-scheme: dark)").matches ? ord[0].corEscura : ord[0].cor;
     const pontos = ord[0].pct - ord[1].pct;
     const unidade = pontos >= 0.995 && pontos < 1.005 ? "ponto percentual" : "pontos percentuais";
-    const verbo = dados.final && MODO !== "demo" ? "terminou com" : "está à frente por";
-    const sufixo = dados.final && MODO !== "demo" ? " a mais" : "";
+    const terminou = dados.final && MODO !== "demo";
+    const verbo = terminou ? "terminou com" : "está à frente por";
+    const sufixo = terminou ? " a mais" : "";
     p.append(nome, document.createTextNode(` ${verbo} ${fmtInt(dif)} votos${sufixo} (${fmtPct(pontos)} ${unidade}).`));
   }
 
@@ -336,9 +354,8 @@
     linha("rAbstencao", fmtInt(d.a), base ? fmtPct((d.a / base) * 100) + "% do eleitorado" : "");
   }
 
-  function desenharFinal(lista, dados) {
+  function desenharFinal(eleito, dados) {
     const box = $("resultadoFinal");
-    const eleito = lista.find((c) => c.eleito);
     box.classList.remove("neutro");
     box.style.removeProperty("--cor");
 
