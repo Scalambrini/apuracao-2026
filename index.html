@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Apuração ao vivo do 2º turno 2026</title>
+  <meta name="description" content="Acompanhe a apuração do 2º turno para Presidente da República com os números oficiais do TSE, atualizados a cada 30 segundos.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Apuração ao vivo do 2º turno 2026">
+  <meta property="og:description" content="Votos de cada candidato e quanto falta apurar, com os dados oficiais do TSE.">
+  <meta name="theme-color" content="#EBEFF4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0E1621" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2315202E'/%3E%3Crect x='6' y='9' width='20' height='5' rx='2.5' fill='%236E91FF'/%3E%3Crect x='6' y='18' width='15' height='5' rx='2.5' fill='%23FF6474'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://resultados.tse.jus.br" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="aviso-modo" id="avisoModo" hidden></div>
+
+  <main class="pagina" id="pagina">
+    <header class="topo">
+      <div class="titulos">
+        <h1 id="titulo">Apuração do 2º turno</h1>
+        <p class="sub" id="subtitulo">Presidente da República, 25 de outubro de 2026</p>
+      </div>
+      <div class="acoes">
+        <div class="vivo" id="status" data-estado="conectando">
+          <span class="ponto" aria-hidden="true"></span>
+          <span id="statusTxt">Conectando ao TSE</span>
+        </div>
+        <button type="button" class="botao" id="compartilhar">Compartilhar</button>
+      </div>
+    </header>
+
+    <section class="progresso" aria-labelledby="tituloProgresso">
+      <h2 class="sr-only" id="tituloProgresso">Andamento da apuração</h2>
+      <div class="prog-num">
+        <div class="bloco">
+          <span class="rotulo">Seções apuradas</span>
+          <strong id="pApurado">0,00%</strong>
+        </div>
+        <div class="bloco direita">
+          <span class="rotulo">Faltam apurar</span>
+          <strong id="pFalta">100,00%</strong>
+        </div>
+      </div>
+      <div class="trilha trilha-prog" id="barraProg" role="progressbar" aria-label="Seções apuradas" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="preench" id="preenchProg"></span>
+      </div>
+      <p class="detalhe" id="secoes">Conectando aos arquivos oficiais do TSE</p>
+    </section>
+
+    <div class="final" id="resultadoFinal" hidden>
+      <strong id="finalTitulo"></strong>
+      <p id="finalTexto"></p>
+    </div>
+
+    <section class="disputa" aria-labelledby="tituloDisputa">
+      <h2 class="sr-only" id="tituloDisputa">Votos por candidato</h2>
+      <ol class="lista" id="lista"></ol>
+      <p class="nota" id="nota">Percentual sobre os votos válidos, como o TSE divulga. A linha no meio de cada barra marca 50%.</p>
+    </section>
+
+    <p class="diferenca" id="diferenca" hidden></p>
+
+    <dl class="resumo" id="resumo">
+      <div><dt>Votos válidos</dt><dd id="rValidos">–</dd></div>
+      <div><dt>Brancos</dt><dd id="rBrancos">–</dd></div>
+      <div><dt>Nulos</dt><dd id="rNulos">–</dd></div>
+      <div><dt>Abstenção</dt><dd id="rAbstencao">–</dd></div>
+    </dl>
+
+    <footer class="rodape">
+      <p id="atualizacao">Aguardando a primeira leitura.</p>
+      <p id="fonte">Números lidos diretamente dos arquivos públicos de divulgação do <a href="https://resultados.tse.jus.br/oficial/app/index.html" rel="noopener">Tribunal Superior Eleitoral</a>. Página independente, sem vínculo com a Justiça Eleitoral.</p>
+    </footer>
+
+    <p class="sr-only" aria-live="polite" id="anuncio"></p>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
